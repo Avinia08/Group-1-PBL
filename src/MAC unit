@@ -1,1 +1,23 @@
+module leaf_mac (
+    input clk,
+    input reset,
+    input [7:0] data_in,      // Input A
+    input [7:0] wt_path_in,   // Input B
+    input [31:0] acc_in,      // Previous sum
+    output reg [31:0] acc_out // Final result
+);
 
+    // Combinational multiplication
+    wire [15:0] product;
+    assign product = data_in * wt_path_in;
+
+    // Sequential accumulation
+    always @(posedge clk) begin
+        if (reset) begin
+            acc_out <= 32'b0;
+        end else begin
+            acc_out <= product + acc_in;
+        end
+    end
+
+endmodule
