@@ -1,1 +1,41 @@
+module mac_tb;
+    reg clk;
+    reg reset;
+    reg [7:0] data_in;
+    reg [7:0] wt_path_in;
+    reg [31:0] acc_in;
+    wire [31:0] acc_out;
 
+    // Instantiate the Leaf Cell
+    leaf_mac uut (
+        .clk(clk),
+        .reset(reset),
+        .data_in(data_in),
+        .wt_path_in(wt_path_in),
+        .acc_in(acc_in),
+        .acc_out(acc_out)
+    );
+
+    // Clock: 10ns period
+    always #5 clk = ~clk;
+
+    initial begin
+        // 1. Initialize & Reset
+        clk = 0; reset = 1; data_in = 0; wt_path_in = 0; acc_in = 0;
+        #10 reset = 0;
+
+        // 2. Test Case 1: 2 * 3 + 0 = 6
+        @(posedge clk);
+        data_in = 8'd2; wt_path_in = 8'd3; acc_in = 32'd0;
+
+        // 3. Test Case 2: 4 * 5 + 10 = 30
+        @(posedge clk);
+        data_in = 8'd4; wt_path_in = 8'd5; acc_in = 32'd10;
+
+        // 4. Test Case 3: 10 * 10 + 100 = 200
+        @(posedge clk);
+        data_in = 8'd10; wt_path_in = 8'd10; acc_in = 32'd100;
+
+        #20 $finish;
+    end
+endmodule
